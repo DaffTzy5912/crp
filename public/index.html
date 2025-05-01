@@ -94,36 +94,46 @@ form button:hover {
     </form>
   </div>
 
-  <script>
-    async function loadChats() {
-      const res = await fetch('/api/chat');
-      const data = await res.json();
-      const box = document.getElementById('chat-box');
-      box.innerHTML = '';
-      data.forEach(chat => {
-        const msg = document.createElement('div');
-        msg.className = 'chat-message';
-        msg.innerHTML = `<strong>${chat.name}</strong> <span class="time">[${chat.time}]</span>: ${chat.message}`;
-        box.appendChild(msg);
-      });
-      box.scrollTop = box.scrollHeight;
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "API_KEY",
+    authDomain: "PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://PROJECT_ID.firebaseio.com",
+    projectId: "PROJECT_ID",
+    storageBucket: "PROJECT_ID.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const chatRef = db.ref("chat");
+
+  const box = document.getElementById('chat-box');
+
+  chatRef.on('value', snapshot => {
+    const data = snapshot.val();
+    box.innerHTML = '';
+    for (const id in data) {
+      const { name, message, time } = data[id];
+      const msg = document.createElement('div');
+      msg.className = 'chat-message';
+      msg.innerHTML = `<strong>${name}</strong> <span class="time">[${time}]</span>: ${message}`;
+      box.appendChild(msg);
     }
+    box.scrollTop = box.scrollHeight;
+  });
 
-    document.getElementById('chat-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const name = document.getElementById('name').value;
-      const message = document.getElementById('message').value;
-      await fetch('/api/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name, message })
-      });
-      document.getElementById('message').value = '';
-      loadChats();
-    });
-
-    setInterval(loadChats, 2000);
-    loadChats();
-  </script>
+  document.getElementById('chat-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const message = document.getElementById('message').value;
+    const time = new Date().toLocaleTimeString();
+    chatRef.push({ name, message, time });
+    document.getElementById('message').value = '';
+  });
+</script>
 </body>
 </html>
