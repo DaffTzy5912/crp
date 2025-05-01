@@ -3,138 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Public Room Chat</title>
-  <style>
-    body {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  font-family: 'Segoe UI', sans-serif;
-  color: white;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.chat-container {
-  background-color: rgba(0,0,0,0.7);
-  border-radius: 16px;
-  padding: 20px;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.chat-box {
-  background: #1a1a2e;
-  height: 300px;
-  overflow-y: auto;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #444;
-}
-
-.chat-message {
-  margin-bottom: 10px;
-  padding: 5px;
-}
-
-.chat-message strong {
-  color: #00f7ff;
-}
-
-.time {
-  color: #ccc;
-  font-size: 0.85em;
-}
-
-form {
-  display: flex;
-  gap: 10px;
-}
-
-form input, form button {
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
-form input {
-  flex: 1;
-}
-
-form button {
-  background: #00f7ff;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-form button:hover {
-  background: #00c0cc;
-}
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <title>Public Chat Room</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="chat-container">
-    <h1>Public Room Chat</h1>
-    <div class="chat-box" id="chat-box"></div>
-    <form id="chat-form">
-      <input type="text" id="name" placeholder="Your name" required />
-      <input type="text" id="message" placeholder="Type a message..." required />
-      <button type="submit">Send</button>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">💬 Public Chat Room</h1>
+    
+    <!-- Chat Container -->
+    <div id="chat-container" class="h-96 overflow-y-auto mb-4 p-4 bg-gray-50 rounded border space-y-4">
+      <!-- Messages will appear here -->
+    </div>
+
+    <!-- Form Input -->
+    <form id="chat-form" class="flex gap-4">
+      <input type="text" id="name" placeholder="Your Name" required
+        class="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="text" id="message" placeholder="Type your message..." required
+        class="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button type="submit"
+        class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        Send
+      </button>
     </form>
   </div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyANrgkdRNMAq_9Fp4qvujLD4g3sf4iYZkU",
-      authDomain: "chatroom-3af4f.firebaseapp.com",
-      projectId: "chatroom-3af4f",
-      storageBucket: "chatroom-3af4f.firebasestorage.app",
-      messagingSenderId: "303948749273",
-      appId: "1:303948749273:web:317c70a4b057e52fade1c8",
-      measurementId: "G-S9ZW96ED1N",
-      databaseURL: "https://chatroom-3af4f-default-rtdb.asia-southeast1.firebasedatabase.app"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const chatRef = db.ref("chat");
-
-    const box = document.getElementById('chat-box');
-
-    chatRef.on('value', snapshot => {
-      const data = snapshot.val();
-      box.innerHTML = '';
-      for (const id in data) {
-        const { name, message, time } = data[id];
-        const msg = document.createElement('div');
-        msg.className = 'chat-message';
-        msg.innerHTML = `<strong>${name}</strong> <span class="time">[${time}]</span>: ${message}`;
-        box.appendChild(msg);
-      }
-      box.scrollTop = box.scrollHeight;
-    });
-
-    document.getElementById('chat-form').addEventListener('submit', e => {
-      e.preventDefault();
-      const name = document.getElementById('name').value;
-      const message = document.getElementById('message').value;
-      const time = new Date().toLocaleTimeString();
-      chatRef.push({ name, message, time });
-      document.getElementById('message').value = '';
-    });
-  </script>
+  <script src="chat.js"></script>
 </body>
 </html>
