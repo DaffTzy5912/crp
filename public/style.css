@@ -1,0 +1,12 @@
+/* Fade-in animation for new messages */
+.message {
+  @apply bg-white p-3 rounded shadow-sm;
+}
+
+.message-enter {
+  @apply transform opacity-0 translate-y-2;
+}
+
+.message-enter-active {
+  @apply transition duration-300 ease-out;
+}
